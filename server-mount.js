@@ -93,7 +93,7 @@ const mount_dirs = (config, dirs) => {
     let c = config;
     dirs.map((dir) => {
         console.log(`Mounting to directory: ${dir}`);
-        let opts = `auto_cache,follow_symlinks,reconnect,noappledouble,volname=${dir}`;
+        let opts = `auto_cache,follow_symlinks,reconnect,volname=${dir}`;
         let command = `sshfs ${c.user}@${c.host}:${c.server_path}/${dir} ${c.dir_path}/${dir} -o ${opts}`;
         cmd.get(command, (err, data, stderr) => {
             if (stderr) console.log(stderr);
