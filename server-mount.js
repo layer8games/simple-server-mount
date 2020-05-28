@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const fs  = require('fs');
+const fs = require('fs');
 const cmd = require('node-cmd');
 const Promise = require('promise');
 
@@ -62,7 +62,7 @@ const create_dirs = (dirs) => {
 
     // I promise to return an array of mountable directories
     return new Promise((resolve) => {
-        let  mountable_dirs = [];
+        let mountable_dirs = [];
         dirs.map((dir) => {
             fs.readdir(dir, (err, files) => {
                 if (err) {
@@ -74,8 +74,8 @@ const create_dirs = (dirs) => {
                     console.log(`Skipping directory: ${dir} already exists.`);
                 }
                 mountable_dirs.push(dir);
-                if ( mountable_dirs.length === dirs.length) {
-                    resolve( mountable_dirs);
+                if (mountable_dirs.length === dirs.length) {
+                    resolve(mountable_dirs);
                 }
             });
         });
@@ -93,7 +93,7 @@ const mount_dirs = (config, dirs) => {
     let c = config;
     dirs.map((dir) => {
         console.log(`Mounting to directory: ${dir}`);
-        let opts = `auto_cache,defer_permissions,follow_symlinks,reconnect,noappledouble,volname=${dir}`;
+        let opts = `auto_cache,follow_symlinks,reconnect,noappledouble,volname=${dir}`;
         let command = `sshfs ${c.user}@${c.host}:${c.server_path}/${dir} ${c.dir_path}/${dir} -o ${opts}`;
         cmd.get(command, (err, data, stderr) => {
             if (stderr) console.log(stderr);
@@ -153,21 +153,21 @@ const unmount_dirs = (config) => {
 
 // RUN THE THINGS
 process_args()
-.then(() => {
-    if (isMounting) {
-        // Create the directories
-        create_dirs(config.dirs)
-        .then((resp_dirs) =>{
-            // Mount to directories that were either just created or already existed
-            mount_dirs(config, resp_dirs);
-        });
-    }
-    else {
-        // Unmount each mount point
-        unmount_dirs(config)
-        .then((resp_dirs) => {
-            // Remove old directories
-            remove_dirs(resp_dirs);
-        });
-    }
-});
+    .then(() => {
+        if (isMounting) {
+            // Create the directories
+            create_dirs(config.dirs)
+                .then((resp_dirs) => {
+                    // Mount to directories that were either just created or already existed
+                    mount_dirs(config, resp_dirs);
+                });
+        }
+        else {
+            // Unmount each mount point
+            unmount_dirs(config)
+                .then((resp_dirs) => {
+                    // Remove old directories
+                    remove_dirs(resp_dirs);
+                });
+        }
+    });
